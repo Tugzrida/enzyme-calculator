@@ -1,0 +1,10 @@
+CACHE MANIFEST
+#V0 - 2020-07-11
+CACHE:
+https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css
+https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js
+https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js
+enzicon.png
+
+NETWORK:
+*

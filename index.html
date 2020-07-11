@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html manifest="cache.manifest">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha512-rO2SXEKBSICa/AfyhEK5ZqWFCOok1rcgPYfGOqtX35OyiraBg6Xa4NnBJwXgpIRoXeWjcAmcQniMhp22htDc6g==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha512-I5TkutApDjnWuX+smLIPZNhw+LhTd8WrQhdCKsxCFRSvhFx2km8ZfEpNIhF9nq04msHhOkE8BMOBj5QE07yhMA==" crossorigin="anonymous"></script>
+    <title>EnzCalc</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="EnzCalc">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="enzicon.png">
+    <link rel="shortcut icon" type="image/png" href="enzicon.png" />
+    <style>
+        html,
+        body {
+            height: 100vh;
+        }
+
+        body {
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .modal {
+            top: env(safe-area-inset-top);
+            height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        }
+
+        .jumbotron {
+            min-width: 80%;
+        }
+
+        #header {
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #header h2 {
+            margin: 0.5rem 0.75rem;
+        }
+
+        #header button {
+            margin: 0.25rem;
+        }
+
+        #header button svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .form-control {
+            min-width: 8ch !important;
+        }
+
+        @media (prefers-color-scheme: dark) {
+
+            body,
+            .form-control,
+            .form-control:focus,
+            .modal-content {
+                background-color: #333333;
+                color: #ffffff;
+            }
+
+            .jumbotron,
+            .input-group-text {
+                background-color: #343a40;
+                color: #ffffff;
+            }
+
+            .close {
+                color: #ffffff;
+                text-shadow: none;
+            }
+
+            hr {
+                border-top: 1px solid rgba(255, 255, 255, .5);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="modal" role="dialog" id="welcomeModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Hi!</h4>
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="updNoti" style="display: none;">
+                        <h5>Updates:</h5>
+                        <ul></ul>
+                        <hr>
+                    </div>
+                    <p>
+                        This is a calculator to help with enzyme calculations for people with Cystic Fibrosis.
+                    </p>
+                    <p>
+                        After entering the grams of fat per enzyme (eg. I take Creon 10,000 and use 8g per capsule), you can enter a food's serving size and fat content.
+                    </p>
+                    <p>
+                        After this, you can either enter the amount you want to eat and get the number of enzymes needed, or enter the number of enzymes you want to have and get the amount of food to eat. The calculated value will highlight in green.
+                    </p>
+                    <p>
+                        Please double-check the calculations the first few times you use the calculator to ensure you understand the output and that it matches up with the way you currently do things.
+                    </p>
+                    <p>
+                        You can also save the calculator on your phone via the "Add to Home Screen" option in the share menu.
+                    </p>
+                    <p>
+                        If you have any feedback or suggestions, feel free to <a href="mailto:enzcalc%40tugzrida.xyz">email me</a>, or if you code, feel free to <a href="https://github.com/Tugzrida/enzyme-calculator">contribute on GitHub</a>.
+                    </p>
+                    <button class="btn btn-success float-right" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-footer">
+                    <p><small>
+                        This tool is provided solely in the hope that it is useful - no guarantee is provided for the accuracy of calculations.
+                    </small></p>
+                    <p><small>
+                        &copy; <a href="https://github.com/Tugzrida">Cameron Steel</a> 2020. This website is licensed under the terms of the GNU Affero General Public License. Source available at <a href="https://github.com/Tugzrida/enzyme-calculator">github.com/Tugzrida/enzyme-calculator</a>
+                    </small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid h-100 d-flex">
+        <div class="jumbotron m-auto">
+            <div id="header" class="d-flex">
+                <h2 class="mr-sm-auto">Enzyme Calculator</h2>
+                <button class="btn btn-outline-info d-flex p-1" data-toggle="modal" data-target="#welcomeModal">
+                    <svg viewBox="0 0 16 16" class="bi" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z" />
+                        <circle cx="8" cy="4.5" r="1" />
+                    </svg>
+                </button>
+            </div>
+            <hr>
+
+            <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                    <label for="gPerEnz" class="input-group-text">Fat per Enzyme (g)</label>
+                </div>
+                <input id="gPerEnz" type="number" inputmode="decimal" min="0" class="form-control">
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <label for="srvSz" class="input-group-text">Serving size (g/mL)</label>
+                </div>
+                <input id="srvSz" type="number" inputmode="decimal" min="0" class="form-control">
+            </div>
+            <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                    <label for="srvFat" class="input-group-text">Fat per serving (g)</label>
+                </div>
+                <input id="srvFat" type="number" inputmode="decimal" min="0" class="form-control">
+            </div>
+
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <label for="amountEat" class="input-group-text">Amount to eat (g/mL)</label>
+                </div>
+                <input id="amountEat" type="number" inputmode="decimal" min="0" class="form-control" data-calculate-enz="true">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label for="enzNeeded" class="input-group-text">Enzymes needed</label>
+                </div>
+                <input id="enzNeeded" type="number" inputmode="numeric" min="0" class="form-control" data-calculate-enz="false">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const version = 0;
+        // Change notes to display for each new version, starting with version 1. Add multiple bullet points per version with </li><li>
+        const relNotes = [""];
+
+        const getVal = id => parseFloat($(id).val());
+        Math.roundPlaces = (n, p) => Math.round((n + Number.EPSILON) * 10 ** p) / 10 ** p;
+        let gPerEnz = 8,
+            calculateEnz = true;
+
+        $(function() {
+            if (localStorage.getItem("gPerEnz")) {
+                gPerEnz = parseFloat(localStorage.getItem("gPerEnz"));
+            }
+            $("#gPerEnz").val(gPerEnz);
+
+            if (localStorage.getItem("enzCalcVers")) {
+                let oldVers = parseInt(localStorage.getItem("enzCalcVers"));
+                if (oldVers !== version) {
+                    $("#updNoti").show();
+                    $("#updNoti ul").html(`<li>${relNotes.slice(oldVers, version).join("</li><li>")}</li>`);
+                    $("#welcomeModal").modal("show");
+                }
+            } else {
+                $("#welcomeModal").modal("show");
+            }
+        });
+
+        $('#welcomeModal').on('hide.bs.modal', function() {
+            localStorage.setItem("enzCalcVers", version);
+        });
+
+
+        $(".form-control").on("input", function() {
+            $this = $(this);
+
+            if ($this.attr("id") === "gPerEnz") {
+                gPerEnz = getVal(this);
+                localStorage.setItem("gPerEnz", gPerEnz);
+            }
+
+            if ($this.data("calculateEnz") !== undefined) {
+                calculateEnz = $this.data("calculateEnz");
+                $("#enzNeeded").toggleClass("bg-success", calculateEnz);
+                $("#amountEat").toggleClass("bg-success", !calculateEnz);
+            }
+
+            if (calculateEnz) {
+                $("#enzNeeded").val(Math.roundPlaces(getVal("#amountEat") * (getVal("#srvFat") / getVal("#srvSz")) / gPerEnz, 1));
+            } else {
+                $("#amountEat").val(Math.roundPlaces(getVal("#enzNeeded") * gPerEnz * (getVal("#srvSz") / getVal("#srvFat")), 1));
+            }
+        });
+
+    </script>
+</body>
+
+</html>
