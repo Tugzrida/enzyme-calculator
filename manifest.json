@@ -1,0 +1,23 @@
+{
+    "name": "EnzCalc",
+    "short_name": "EnzCalc",
+    "display": "standalone",
+    "start_url": "/enzyme-calculator/",
+    "icons": [{
+        "src": "enzicon512.png",
+        "type": "image/png",
+        "sizes": "512x512",
+        "purpose": "any maskable"
+    }, {
+        "src": "enzicon256.png",
+        "type": "image/png",
+        "sizes": "256x256",
+        "purpose": "any maskable"
+    }, {
+        "src": "enzicon192.png",
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "any maskable"
+    }],
+    "scope": "/enzyme-calculator/"
+}

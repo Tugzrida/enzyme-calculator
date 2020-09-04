@@ -1,30 +1,31 @@
 <!DOCTYPE html>
-<html manifest="cache.manifest">
+<html>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <title>EnzCalc</title>
 
+    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="EnzCalc">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="enzicon.png" />
-    <link rel="shortcut icon" type="image/png" href="enzicon.png" />
+    <link rel="apple-touch-icon" href="enzicon256.png">
+    <link rel="shortcut icon" type="image/png" href="enzicon192.png">
 
-    <meta name="twitter:image" content="https://tugzrida.github.io/enzyme-calculator/enzicon.png" />
-    <meta name="twitter:site" content="@tugzrida" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="EnzCalc" />
-    <meta name="twitter:description" content="Simple web app to calculate enzymes for people with CF" />
-    <meta property="og:image" content="https://tugzrida.github.io/enzyme-calculator/enzicon.png" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="EnzCalc" />
-    <meta property="og:url" content="https://tugzrida.github.io/enzyme-calculator/" />
-    <meta property="og:description" content="Simple web app to calculate enzymes for people with CF" />
+    <meta name="twitter:image" content="https://tugzrida.github.io/enzyme-calculator/enzicon512.png">
+    <meta name="twitter:site" content="@tugzrida">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="EnzCalc">
+    <meta name="twitter:description" content="Simple web app to calculate enzymes for people with CF">
+    <meta property="og:image" content="https://tugzrida.github.io/enzyme-calculator/enzicon512.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="EnzCalc">
+    <meta property="og:url" content="https://tugzrida.github.io/enzyme-calculator/">
+    <meta property="og:description" content="Simple web app to calculate enzymes for people with CF">
     <style>
         html,
         body {
@@ -138,6 +139,7 @@
                     <p><small>
                         &copy; <a href="https://github.com/Tugzrida">Cameron Steel</a> 2020. This website is licensed under the terms of the GNU Affero General Public License. Source available at <a href="https://github.com/Tugzrida/enzyme-calculator">github.com/Tugzrida/enzyme-calculator</a>
                     </small></p>
+                    <p><small id="vNum"></small></p>
                 </div>
             </div>
         </div>
@@ -192,9 +194,9 @@
     </div>
 
     <script>
-        const version = 0;
+        const version = 1;
         // Change notes to display for each new version, starting with version 1. Add multiple bullet points per version with </li><li>
-        const relNotes = [""];
+        const relNotes = ["Offline usage is now much more reliable. Install to your phone with the \"Add to Home Screen\" option in the share menu."];
 
         const getVal = id => parseFloat($(id).val());
         Math.roundPlaces = (n, p) => Math.round((n + Number.EPSILON) * 10 ** p) / 10 ** p;
@@ -202,11 +204,16 @@
             calculateEnz = true;
 
         $(function() {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("sw.js");
+            }
+
             if (localStorage.getItem("gPerEnz")) {
                 gPerEnz = parseFloat(localStorage.getItem("gPerEnz"));
             }
             $("#gPerEnz").val(gPerEnz);
 
+            $("#vNum").text(`v${version}`);
             if (localStorage.getItem("enzCalcVers")) {
                 let oldVers = parseInt(localStorage.getItem("enzCalcVers"));
                 if (oldVers !== version) {
@@ -219,7 +226,7 @@
             }
         });
 
-        $('#welcomeModal').on('hide.bs.modal', function() {
+        $("#welcomeModal").on("hide.bs.modal", function() {
             localStorage.setItem("enzCalcVers", version);
         });
 
